@@ -3,7 +3,7 @@ from . import __version__ as app_version
 app_name = "ssv_reutlingen"
 app_title = "SSV Reutlingen"
 app_publisher = "phamos.eu"
-app_description = "ERP sy"
+app_description = "ERP system for SSV Reutlingen football club"
 app_icon = "octicon octicon-file-directory"
 app_color = "grey"
 app_email = "support@phamos.eu"

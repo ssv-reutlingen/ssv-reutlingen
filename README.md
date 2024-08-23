@@ -1,6 +1,6 @@
 ## SSV Reutlingen
 
-ERP sy
+ERP system for SSV Reutlingen football club
 
 #### License
 
