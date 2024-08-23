@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include ssv_reutlingen *.css
+recursive-include ssv_reutlingen *.csv
+recursive-include ssv_reutlingen *.html
+recursive-include ssv_reutlingen *.ico
+recursive-include ssv_reutlingen *.js
+recursive-include ssv_reutlingen *.json
+recursive-include ssv_reutlingen *.md
+recursive-include ssv_reutlingen *.png
+recursive-include ssv_reutlingen *.py
+recursive-include ssv_reutlingen *.svg
+recursive-include ssv_reutlingen *.txt
+recursive-exclude ssv_reutlingen *.pyc
