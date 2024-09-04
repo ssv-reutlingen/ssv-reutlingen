@@ -1,0 +1,46 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-09-04 13:50:00.878912",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "sponsoring_section",
+  "tax_rate"
+ ],
+ "fields": [
+  {
+   "fieldname": "sponsoring_section",
+   "fieldtype": "Section Break",
+   "label": "Sponsoring"
+  },
+  {
+   "fieldname": "tax_rate",
+   "fieldtype": "Float",
+   "label": "Tax Rate"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-09-04 13:50:00.878912",
+ "modified_by": "Administrator",
+ "module": "SSV Reutlingen",
+ "name": "SSV Reutlingen Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
