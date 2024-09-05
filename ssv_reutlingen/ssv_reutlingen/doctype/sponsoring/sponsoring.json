@@ -1,0 +1,152 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:SPONSORING-{#####}",
+ "creation": "2024-09-03 13:40:37.853242",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "customer",
+  "customer_name",
+  "contract_start",
+  "contract_end",
+  "customer_contact",
+  "sponsoring_category",
+  "latest_notice_date",
+  "upload_notice",
+  "net_total",
+  "grand_total",
+  "contract_url",
+  "type",
+  "column_break_ddcos",
+  "notes",
+  "sponsoring_items_section",
+  "sponsoring_items"
+ ],
+ "fields": [
+  {
+   "description": "Link to Customer who is paying for Sponsoring",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "description": "Full name of linked Customer",
+   "fetch_from": "customer.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "read_only": 1
+  },
+  {
+   "description": "Start Date of Contract",
+   "fieldname": "contract_start",
+   "fieldtype": "Date",
+   "label": "Contract Start"
+  },
+  {
+   "description": "End date of Contract",
+   "fieldname": "contract_end",
+   "fieldtype": "Date",
+   "label": "Contract End"
+  },
+  {
+   "description": "Main Contact who is responsible for this Sponsoring/Contract on customer Side",
+   "fieldname": "customer_contact",
+   "fieldtype": "Link",
+   "label": "Customer Contact",
+   "options": "Contact"
+  },
+  {
+   "description": "Link to which Sponsoring Category this customer is in",
+   "fieldname": "sponsoring_category",
+   "fieldtype": "Link",
+   "label": "Sponsoring Category",
+   "options": "Sponsoring Category"
+  },
+  {
+   "description": "Date to which the Customer can cancel the contract for it not be be continued",
+   "fieldname": "latest_notice_date",
+   "fieldtype": "Date",
+   "label": "Latest Notice Date"
+  },
+  {
+   "description": "Here you can upload the PDF or other file with Notice from customer",
+   "fieldname": "upload_notice",
+   "fieldtype": "Attach",
+   "label": "Upload Notice"
+  },
+  {
+   "description": "Input field for net total of contract for the above start/end",
+   "fieldname": "net_total",
+   "fieldtype": "Currency",
+   "label": "Net Total"
+  },
+  {
+   "description": "Input field for grand total of contract for the above start/end. Net Total + Tax",
+   "fieldname": "grand_total",
+   "fieldtype": "Currency",
+   "label": "Grand Total"
+  },
+  {
+   "description": "Here the URL to nextcloud can be pasted to have a shortcut to the original contract",
+   "fieldname": "contract_url",
+   "fieldtype": "Data",
+   "label": "Contract URL",
+   "options": "URL"
+  },
+  {
+   "description": "Barter or Cash?",
+   "fieldname": "type",
+   "fieldtype": "Data",
+   "label": "Type"
+  },
+  {
+   "fieldname": "column_break_ddcos",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text Editor",
+   "label": "Notes",
+   "print_width": "400",
+   "width": "400"
+  },
+  {
+   "fieldname": "sponsoring_items_section",
+   "fieldtype": "Section Break",
+   "label": "Sponsoring Items"
+  },
+  {
+   "fieldname": "sponsoring_items",
+   "fieldtype": "Table",
+   "label": "Sponsoring Items",
+   "options": "Sponsoring Items"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-09-03 15:18:13.129747",
+ "modified_by": "Administrator",
+ "module": "SSV Reutlingen",
+ "name": "Sponsoring",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
