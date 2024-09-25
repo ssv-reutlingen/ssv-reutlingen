@@ -15,14 +15,17 @@
   "sponsoring_category",
   "latest_notice_date",
   "upload_notice",
-  "net_total",
-  "grand_total",
   "contract_url",
-  "type",
   "column_break_ddcos",
   "notes",
   "sponsoring_items_section",
-  "sponsoring_items"
+  "sponsoring_items",
+  "section_break_vmeaz",
+  "net_total",
+  "column_break_s1gab",
+  "grand_total",
+  "section_break_jsjo4",
+  "contribution_type"
  ],
  "fields": [
   {
@@ -79,16 +82,20 @@
    "label": "Upload Notice"
   },
   {
+   "default": "0",
    "description": "Input field for net total of contract for the above start/end",
    "fieldname": "net_total",
    "fieldtype": "Currency",
-   "label": "Net Total"
+   "label": "Net Total",
+   "read_only": 1
   },
   {
+   "default": "0",
    "description": "Input field for grand total of contract for the above start/end. Net Total + Tax",
    "fieldname": "grand_total",
    "fieldtype": "Currency",
-   "label": "Grand Total"
+   "label": "Grand Total",
+   "read_only": 1
   },
   {
    "description": "Here the URL to nextcloud can be pasted to have a shortcut to the original contract",
@@ -96,12 +103,6 @@
    "fieldtype": "Data",
    "label": "Contract URL",
    "options": "URL"
-  },
-  {
-   "description": "Barter or Cash?",
-   "fieldname": "type",
-   "fieldtype": "Data",
-   "label": "Type"
   },
   {
    "fieldname": "column_break_ddcos",
@@ -124,11 +125,29 @@
    "fieldtype": "Table",
    "label": "Sponsoring Items",
    "options": "Sponsoring Items"
+  },
+  {
+   "fieldname": "column_break_s1gab",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_vmeaz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_jsjo4",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "contribution_type",
+   "fieldtype": "Table",
+   "label": "Contribution Type",
+   "options": "Contribution Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-03 15:18:13.129747",
+ "modified": "2024-09-25 17:14:18.607644",
  "modified_by": "Administrator",
  "module": "SSV Reutlingen",
  "name": "Sponsoring",
