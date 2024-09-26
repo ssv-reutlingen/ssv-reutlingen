@@ -45,3 +45,39 @@ frappe.ui.form.on('Sponsoring', {
         });
 	}
 });
+
+frappe.ui.form.on('Sponsoring Items', {
+	net_rate: function(frm,cdt,cdn) {
+		let row = locals[cdt][cdn];
+		row.net_amount = calculate_amount(row.net_rate, row.quantity)
+		refresh_field("net_amount", cdn, "sponsoring_items");
+		calculate_net_total(frm)
+	},
+
+	quantity: function(frm,cdt,cdn) {
+		let row = locals[cdt][cdn];
+		row.net_amount = calculate_amount(row.net_rate, row.quantity)
+		refresh_field("net_amount", cdn, "sponsoring_items");
+		calculate_net_total(frm)
+	},
+
+	sponsoring_items_remove: function(frm,cdt,cdn){
+		calculate_net_total(frm)
+	}
+});
+
+function calculate_amount (net_rate, quantity) {
+	return net_rate * quantity
+}
+
+function calculate_net_total (frm) {
+	frappe.call({
+		method: 'calculate_net_total',
+		doc: frm.doc,
+		callback: function(res) {
+			if (res.message) {
+				frm.set_value('net_total', res.message);
+			}
+		}
+	});
+}
