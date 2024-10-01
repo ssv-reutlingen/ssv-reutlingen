@@ -1,0 +1,23 @@
+Sponsoring,Förderer
+Link to Customer who is paying for Sponsoring,"Link zum Kunden, der für das Sponsoring zahlt"
+Full name of linked Customer,Vollständiger Name des verknüpften Kunden
+Contract Start,Vertragsbeginn
+Start Date of Contract,Datum des Vertragsbeginns
+Contract End,Vertragsende
+End date of Contract,Datum des Vertragsendes
+Main Contact who is responsible for this Sponsoring/Contract on customer Side,"Hauptansprechpartner, der für dieses Sponsoring/Vertrag auf Kundenseite verantwortlich ist"
+Sponsoring Category,Sponsoring-Kategorie
+Link to which Sponsoring Category this customer is in,"Link zu der Sponsoring-Kategorie, in der sich dieser Kunde befindets"
+Latest Notice Date,Spätestes Benachrichtigungsdatum
+Date to which the Customer can cancel the contract for it not be be continued,"Datum, bis zu dem der Kunde vom Vertrag zurücktreten kann, um dessen Fortsetzung zu verhindern"
+Upload Notice,Upload-Hinweis
+Here you can upload the PDF or other file with Notice from customer,Hier können Sie das PDF oder eine andere Datei mit der Mitteilung des Kunden hochladen
+Input field for net total of contract for the above start/end,Eingabefeld für den Netto-Vertragsbetrag für den oben genannten Beginn/Ende
+"Input field for grand total of contract for the above start/end. Net Total + Tax","Eingabefeld für die Gesamtsumme des Vertrags für den oben genannten Beginn/Ende. Nettosumme + Steuer"
+Contract URL,Vertrags-URL
+Here the URL to nextcloud can be pasted to have a shortcut to the original contract,"Hier kann die URL zu Nextcloud eingefügt werden, um eine Verknüpfung zum Originalvertrag zu erhalten"
+Barter or Cash?,Tauschhandel oder Bargeld?
+Sponsoring Items,Sponsoring-Artikel
+Commercials,Werbespots
+SSV Reutlingen Settings,SSV Reutlingen Einstellungen
+The sum of Contribution Type amounts must equal with Net Total,Die Summe der Beitragsartenbeträge muss dem Nettogesamtbetrag entsprechen
