@@ -22,7 +22,7 @@ def get_columns():
 			"label": _("Customer Group"),
 			"fieldname": "customer_group",
 			"fieldtype": "Link",
-			"options": _("Customer Group"),
+			"options": "Customer Group",
 			"width": 150
 		},
         {
