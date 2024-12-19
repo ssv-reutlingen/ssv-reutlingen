@@ -15,7 +15,8 @@ def get_columns():
         {
 			"label": _("Customer Name"),
 			"fieldname": "customer_name",
-			"fieldtype": "Data", 
+			"fieldtype": "Link",
+			"options": "Customer", 
 			"width": 200
 		},
         {
@@ -64,7 +65,7 @@ def get_data(filters):
 
 	data = frappe.db.sql("""
         SELECT
-            c.customer_name,
+            c.name AS customer_name,
             c.customer_group,
             con.salutation,
             con.first_name,
