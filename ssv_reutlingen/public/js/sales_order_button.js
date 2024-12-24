@@ -2,79 +2,77 @@ frappe.ui.form.on('Sales Order', {
     refresh: function(frm) {
         
         const has_valid_items = frm.doc.items.some(item => item.item_code);
-        if (has_valid_items) {
+        if (!frm.doc.processed && has_valid_items) {
             frm.add_custom_button(__('Create Delivery Notes and Send Emails'), function() {
+                const dialog = new frappe.ui.Dialog({
+                    title: __("Create Delivery Notes and Send Emails"),
+                    fields: [
+                        {
+                            fieldtype: "Table",
+                            fieldname: "items_with_templates",
+                            label: __("Items and Email Templates"),
+                            fields: [
+                                {
+                                    fieldtype: "Link",
+                                    fieldname: "item_code",
+                                    label: __("Item Code"),
+                                    options: 'Item',
+                                    in_list_view: 1,
+                                },
+                                {
+                                    fieldtype: "Link",
+                                    fieldname: "email_template",
+                                    label: __("Email Template"),
+                                    options: "Email Template",
+                                    in_list_view: 1,
+                                },
+                            ],
+                            data: frm.doc.items.map(item => ({
+                                item_code: item.item_code,
+                                email_template: "",
+                                edit_option: 0,
+                            })),
+                            get_data: () => {
+                                return dialog.get_value("items_with_templates");
+                            },
+                        },
+                    ],
+                    primary_action_label: __("Create Delivery Notes"),
+                    primary_action: function() {
+                        let dialog_data = dialog.get_value("items_with_templates");
 
-
-                frappe.call({
-                    method: "ssv_reutlingen.events.custom_sales_order.create_delivery_notes",
-                    args: {
-                        sales_order: frm.doc.name  // Pass the Sales Order name
-                    },
-                    callback: function(response) {
-                        if (response.message) {
-                            // Show a success message with the created Delivery Notes
-                            frappe.msgprint(__('Delivery Notes created successfully.'));
-                            // frappe.msgprint({
-                            //     title: __('Success'),
-                            //     message: __('Delivery Notes created: {0}', [response.message.join(', ')]),
-                            //     indicator: 'green'
-                            // });
+                        if (!dialog_data || !dialog_data.length) {
+                            frappe.msgprint(__("Please map at least one Email Template to proceed."));
+                            return;
                         }
-                    }
+
+                        dialog_data = dialog_data.reduce((acc, item) => {
+                            acc[item.item_code] = item.email_template;
+                            return acc;
+                        }, {});
+
+                        dialog.hide();
+                        
+                        frappe.call({
+                            method: "ssv_reutlingen.api.custom_sales_order.create_delivery_notes",
+                            args: {
+                                sales_order: frm.doc.name,
+                                dialog_data: dialog_data,
+                                items: frm.doc.items
+                            },
+                            callback: function(response) {
+                                if (response.message) {
+                                    frm.reload_doc();
+                                    frappe.msgprint(__("Delivery Notes created and emails sent successfully!"));
+                                    
+                                }
+                            }
+                        });
+                    },
                 });
 
-                
-                // if (frm.cscript && frm.cscript.make_delivery_note_based_on_delivery_date) {
-                //     frm.cscript.make_delivery_note_based_on_delivery_date();
-                // } else {
-                //     frappe.msgprint(__('The required function is not available.'));
-                // }
+                dialog.show();
 
-                // if (frm.cscript && frm.cscript.make_delivery_note) {
-                //     frm.cscript.make_delivery_note(['2024-12-18']);
-                // } else {
-                //     frappe.msgprint(__('The required function is not available.'));
-                // }
-
-                // let delivery_dates = ['2024-12-18']
-
-                // frappe.call({
-
-                //     method: "erpnext.selling.doctype.sales_order.sales_order.make_delivery_note",
-                //     frm: frm,
-                //     args: {
-                //         source_name: frm.doc.name,
-                //         delivery_dates: delivery_dates
-                //     },
-                //     // method: "your_app.your_module.sales_order.create_delivery_notes_and_emails",
-                //     // args: {
-                //     //     sales_order: frm.doc.name
-                //     // },
-                //     callback: function(r) {
-                //         if (r.message) {
-                //             console.log(r.message)
-                //             let delivery_note = frappe.model.sync(response.message)[0];
-                            
-                //             frappe.call({
-                //                 method: "frappe.desk.form.save.savedocs",
-                //                 args: {
-                //                     doc: delivery_note
-                //                 },
-                //                 callback: function(save_response) {
-                //                     if (!save_response.exc) {
-                //                         frappe.msgprint(__("Document saved successfully!"));
-                //                     }
-                //                 }
-                //             });
-
-                //             // frappe.msgprint(__('Delivery Note created successfully'));
-                //         }
-                //         // if (!r.exc) {
-                //         //     frappe.msgprint(__('Delivery Notes and Emails processed successfully'));
-                //         // }
-                //     }
-                // });
             });
         }
     }
