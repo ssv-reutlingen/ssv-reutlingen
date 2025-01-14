@@ -31,7 +31,9 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+	"Sales Order" : "public/js/sales_order_button.js",
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -59,8 +61,13 @@ app_license = "MIT"
 # before_install = "ssv_reutlingen.install.before_install"
 # after_install = "ssv_reutlingen.install.after_install"
 
+after_migrate = "ssv_reutlingen.setup.install.after_migrate"
+after_install = "ssv_reutlingen.setup.install.after_migrate"
+
 # Uninstallation
 # ------------
+
+before_uninstall = "ssv_reutlingen.setup.install.before_uninstall"
 
 # before_uninstall = "ssv_reutlingen.uninstall.before_uninstall"
 # after_uninstall = "ssv_reutlingen.uninstall.after_uninstall"
