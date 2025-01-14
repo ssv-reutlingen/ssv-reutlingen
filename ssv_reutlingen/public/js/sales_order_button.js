@@ -1,8 +1,12 @@
 frappe.ui.form.on('Sales Order', {
     refresh: function(frm) {
         
+        if (frm.is_new()) {
+            frm.doc.processed = 0
+        }
+        
         const has_valid_items = frm.doc.items.some(item => item.item_code);
-        if (!frm.doc.processed && has_valid_items) {
+        if (!frm.doc.processed && has_valid_items && frm.doc.docstatus === 1) {
             frm.add_custom_button(__('Create Delivery Notes and Send Emails'), function() {
                 const dialog = new frappe.ui.Dialog({
                     title: __("Create Delivery Notes and Send Emails"),
