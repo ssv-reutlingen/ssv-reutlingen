@@ -68,15 +68,12 @@ frappe.ui.form.on('Sales Order', {
                                 if (response.message) {
                                     frm.reload_doc();
                                     frappe.msgprint(__("Delivery Notes created and emails sent successfully!"));
-                                    
                                 }
                             }
                         });
                     },
                 });
-
                 dialog.show();
-
             });
         }
     }
