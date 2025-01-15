@@ -9,10 +9,18 @@ def create_delivery_notes(sales_order, dialog_data, items):
     dialog_data = json.loads(dialog_data)
     items = json.loads(items)
     
-    total_steps = len(items) * 2
+    total_steps = len(items)
     current_step = 0
 
     for idx, item in enumerate(items):
+        current_step += 1
+        progress = (current_step / total_steps) * 100
+        frappe.publish_progress(
+            progress,
+            title=_("Creating Delivery Notes and Sending Emails"),
+            description=_("Creating delivery note and sending email for item {}/{}").format(current_step, total_steps)
+        )
+
         delivery_note_doc = frappe.new_doc("Delivery Note")
         delivery_note_doc.customer = sales_order_doc.customer
         delivery_note_doc.posting_date = frappe.utils.nowdate()
@@ -34,23 +42,7 @@ def create_delivery_notes(sales_order, dialog_data, items):
         delivery_note_doc.submit()
         frappe.db.commit()
 
-        current_step += 1
-        progress = (current_step / total_steps) * 100
-        frappe.publish_progress(
-            progress,
-            title=_("Creating Delivery Notes"),
-            description=_("Created delivery note for item {}/{}").format(current_step, total_steps)
-        )
-
         send_csv_via_email(email, delivery_note_doc, template)
-
-        current_step += 1
-        progress = (current_step / total_steps) * 100
-        frappe.publish_progress(
-            progress,
-            title=_("Sending Emails"),
-            description=_("Sent email for delivery note {}/{}").format(current_step, total_steps)
-        )
 
     sales_order_doc.db_set("processed", 1)
 
