@@ -146,9 +146,9 @@ before_uninstall = "ssv_reutlingen.setup.install.before_uninstall"
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
 # along with any modifications made in other Frappe apps
-# override_doctype_dashboards = {
-#	"Task": "ssv_reutlingen.task.get_dashboard_data"
-# }
+override_doctype_dashboards = {
+	"Customer": "ssv_reutlingen.dashboard.customer_dashboard_extension.get_data"
+}
 
 # exempt linked doctypes from being automatically cancelled
 #
