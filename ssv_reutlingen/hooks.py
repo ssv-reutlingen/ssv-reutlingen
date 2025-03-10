@@ -102,13 +102,11 @@ before_uninstall = "ssv_reutlingen.setup.install.before_uninstall"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-#	"*": {
-#		"on_update": "method",
-#		"on_cancel": "method",
-#		"on_trash": "method"
-#	}
-# }
+doc_events = {
+	"Sales Order": {
+		"on_submit": "ssv_reutlingen.events.update_sponsoring.set_sales_order",
+	}
+}
 
 # Scheduled Tasks
 # ---------------
@@ -135,7 +133,8 @@ scheduler_events = {
 # generated from the base implementation of the doctype dashboard,
 # along with any modifications made in other Frappe apps
 override_doctype_dashboards = {
-	"Customer": "ssv_reutlingen.dashboard.customer_dashboard_extension.get_data"
+	"Customer": "ssv_reutlingen.dashboard.customer_dashboard_extension.get_data",
+	"Sales Order": "ssv_reutlingen.dashboard.sales_order_dashboard_extension.get_data"
 }
 
 # exempt linked doctypes from being automatically cancelled

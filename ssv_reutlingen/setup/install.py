@@ -33,9 +33,16 @@ def get_custom_fields():
 			"label": "Processed",
             "default": "0",
             "print_hide": 1,
-			"allow_on_submit": 1,
             "insert_after": "ssv_section"
         },
+		{
+			"fieldname": "sponsoring",
+            "fieldtype": "Link",
+			"options": "Sponsoring",
+			"label": "Sponsoring",
+            "print_hide": 1,
+            "insert_after": "processed"
+		}
 	]
 
 	custom_fields_item = [

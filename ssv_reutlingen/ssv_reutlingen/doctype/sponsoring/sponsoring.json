@@ -24,7 +24,7 @@
   "status",
   "sponsoring_items_section",
   "sponsoring_items",
-  "processed",
+  "sales_order",
   "section_break_vmeaz",
   "net_total",
   "column_break_s1gab",
@@ -157,13 +157,6 @@
    "options": "Renew Automatically\nExpire Automatically"
   },
   {
-   "default": "0",
-   "fieldname": "processed",
-   "fieldtype": "Check",
-   "hidden": 1,
-   "label": "Processed"
-  },
-  {
    "fieldname": "contact_email",
    "fieldtype": "Data",
    "hidden": 1,
@@ -187,11 +180,18 @@
    "options": "Company",
    "read_only": 1,
    "reqd": 1
+  },
+  {
+   "fieldname": "sales_order",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Sales Order",
+   "options": "Sales Order"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-19 08:16:22.440987",
+ "modified": "2025-03-10 09:10:18.732063",
  "modified_by": "Administrator",
  "module": "SSV Reutlingen",
  "name": "Sponsoring",
