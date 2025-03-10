@@ -4,6 +4,11 @@ frappe.ui.form.on('Sales Order', {
         if (frm.is_new()) {
             frm.doc.processed = 0
         }
+
+        const button = document.querySelector('button.btn-secondary[data-doctype="Sponsoring"]');
+        if (button) {
+            button.remove()
+        }
         
         const has_valid_items = frm.doc.items ? frm.doc.items.some(item => item.item_code) : false;
 

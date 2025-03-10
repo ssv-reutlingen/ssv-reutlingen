@@ -4,6 +4,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import nowdate, add_days, date_diff, getdate
+from frappe.model.mapper import get_mapped_doc
 from datetime import datetime, date
 from frappe import _
 
@@ -11,7 +12,12 @@ class Sponsoring(Document):
 	def validate(self):
 		self.validate_contribution_type()
 		self.set_status()
+		self.remove_sales_order()
 		
+	def remove_sales_order(self):
+		if self.is_new():
+			self.sales_order = None
+
 	def validate_contribution_type(self):
 		total_contribution_amount = 0
 		for ct in self.contribution_type:
@@ -61,6 +67,49 @@ class Sponsoring(Document):
 	def enhance_contract(self):
 		self.contract_start = self.get_contract_start()
 		self.contract_end, self.latest_notice_date = self.get_contract_end_and_notice_dates()
+
+
+@frappe.whitelist()
+def create_sales_order(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		target.customer = source.customer
+		target.company = source.company
+		target.sponsoring = source.name
+		
+		# Run ERPNext default calculations first
+		target.run_method("set_missing_values")
+		target.run_method("calculate_taxes_and_totals")
+
+		# Manually override rate after ERPNext's recalculations
+		for item in target.items:
+			sponsoring_item = next((si for si in source.sponsoring_items if si.item_code == item.item_code), None)
+			if sponsoring_item:
+				item.rate = sponsoring_item.net_rate
+
+	doc = get_mapped_doc("Sponsoring", source_name, {
+		"Sponsoring": {
+			"doctype": "Sales Order",
+			"field_map": {
+				"customer": "customer",
+				"company": "company",
+				
+			}
+		},
+		"Sponsoring Items": {
+			"doctype": "Sales Order Item",
+			"field_map": {
+				"item_code": "item_code",
+				"item_description": "description",
+				"uom": "uom",
+				"qty": "qty",
+				"net_rate": "rate",
+			}
+		}
+	}, target_doc, set_missing_values)
+
+	frappe.db.set_value("Sponsoring", source_name, "sales_order", doc.name)
+
+	return doc
 
 
 @frappe.whitelist()
