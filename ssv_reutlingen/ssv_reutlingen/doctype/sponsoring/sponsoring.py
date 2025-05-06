@@ -13,7 +13,11 @@ class Sponsoring(Document):
 		self.validate_contribution_type()
 		self.set_status()
 		self.remove_sales_order()
-		
+	
+	def on_update(self):
+		if self.quotation:
+			frappe.db.set_value("Quotation", self.quotation, "sponsoring", self.name)
+
 	def remove_sales_order(self):
 		if self.is_new():
 			self.sales_order = None
@@ -92,7 +96,6 @@ def create_sales_order(source_name, target_doc=None):
 			"field_map": {
 				"customer": "customer",
 				"company": "company",
-				
 			}
 		},
 		"Sponsoring Items": {

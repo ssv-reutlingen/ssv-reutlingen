@@ -24,6 +24,8 @@
   "status",
   "sponsoring_items_section",
   "sponsoring_items",
+  "quotation",
+  "prevdoc_docname",
   "sales_order",
   "section_break_vmeaz",
   "net_total",
@@ -182,6 +184,18 @@
    "reqd": 1
   },
   {
+   "fieldname": "quotation",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Quotation",
+   "options": "Quotation"
+  },
+  {
+   "fieldname": "prevdoc_docname",
+   "fieldtype": "Data",
+   "label": "Prev Doc"
+  },
+  {
    "fieldname": "sales_order",
    "fieldtype": "Link",
    "hidden": 1,
@@ -191,7 +205,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-10 09:10:18.732063",
+ "modified": "2025-05-06 10:37:17.782666",
  "modified_by": "Administrator",
  "module": "SSV Reutlingen",
  "name": "Sponsoring",
