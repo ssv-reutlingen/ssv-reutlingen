@@ -33,6 +33,7 @@ app_license = "MIT"
 # include js in doctype views
 doctype_js = {
 	"Sales Order" : "public/js/sales_order_button.js",
+    "Quotation" : "public/js/quotation.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -134,7 +135,8 @@ scheduler_events = {
 # along with any modifications made in other Frappe apps
 override_doctype_dashboards = {
 	"Customer": "ssv_reutlingen.dashboard.customer_dashboard_extension.get_data",
-	"Sales Order": "ssv_reutlingen.dashboard.sales_order_dashboard_extension.get_data"
+	"Sales Order": "ssv_reutlingen.dashboard.sales_order_dashboard_extension.get_data",
+    "Quotation": "ssv_reutlingen.dashboard.quotation_dashboard_extension.get_data"
 }
 
 # exempt linked doctypes from being automatically cancelled

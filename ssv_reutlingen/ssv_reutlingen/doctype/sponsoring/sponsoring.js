@@ -4,28 +4,25 @@
 frappe.ui.form.on('Sponsoring', {
 	refresh: function(frm) {
 		const has_valid_items = frm.doc.sponsoring_items ? frm.doc.sponsoring_items.some(item => item.item_code) : false;
-        
-		if (!frm.doc.sales_order) {
-            if (has_valid_items){
-                frm.add_custom_button(
-                    __('Sales Order'), 
-                    () => frm.events.make_sales_order(frm),
-                    __('Create'));
-                
-                // override the plus icon after sale order reference 
-                const button = document.querySelector('button.btn-secondary[data-doctype="Sales Order"]');
-                if (button) {
-                    button.replaceWith(button.cloneNode(true));
-                    const newButton = document.querySelector('button.btn-secondary[data-doctype="Sales Order"]');
-                    newButton.addEventListener('click',
-                        () => frm.events.make_sales_order(frm)
-                    );
-                }
-            }
-		} else {
+        const button = document.querySelector('button.btn-secondary[data-doctype="Quotation"]');
+        if (button) {
+            button.remove()
+        }
+
+        if (has_valid_items){
+            frm.add_custom_button(
+                __('Sales Order'), 
+                () => frm.events.make_sales_order(frm),
+                __('Create'));
+            
+            // override the plus icon after sale order reference 
             const button = document.querySelector('button.btn-secondary[data-doctype="Sales Order"]');
             if (button) {
-                button.remove()
+                button.replaceWith(button.cloneNode(true));
+                const newButton = document.querySelector('button.btn-secondary[data-doctype="Sales Order"]');
+                newButton.addEventListener('click',
+                    () => frm.events.make_sales_order(frm)
+                );
             }
         }
 	},
