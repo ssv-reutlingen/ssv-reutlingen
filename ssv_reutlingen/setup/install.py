@@ -32,6 +32,7 @@ def get_custom_fields():
 			"label": "Processed",
             "default": "0",
             "print_hide": 1,
+			"hidden": 1,
             "insert_after": "ssv_section"
         },
 		{
@@ -40,6 +41,7 @@ def get_custom_fields():
 			"options": "Sponsoring",
 			"label": "Sponsoring",
             "print_hide": 1,
+			"hidden": 1,
             "insert_after": "processed"
 		}
 	]
