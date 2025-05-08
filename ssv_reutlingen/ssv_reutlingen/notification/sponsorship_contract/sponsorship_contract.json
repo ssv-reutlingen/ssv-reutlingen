@@ -1,0 +1,29 @@
+{
+ "attach_print": 0,
+ "channel": "System Notification",
+ "creation": "2025-02-18 16:23:53.863255",
+ "date_changed": "contract_end",
+ "days_in_advance": 30,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Sponsoring",
+ "enabled": 1,
+ "event": "Days Before",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "{% if doc.renew_or_expire == \"Renew Automatically\" %}\n    The sponsorship contract is going to renew automatically on {{ doc.contract_end }}.\n{% elif doc.renew_or_expire == \"Expire Automatically\" %}\n    The sponsorship contract will expire automatically on {{ doc.contract_end }}.\n{% endif %}",
+ "modified": "2025-02-19 08:30:35.577487",
+ "modified_by": "Administrator",
+ "module": "SSV Reutlingen",
+ "name": "Sponsorship Contract",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_role": "All"
+  }
+ ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
+ "subject": "Sponsorship Contract Alert: {{ doc.name }}",
+ "value_changed": "customer"
+}

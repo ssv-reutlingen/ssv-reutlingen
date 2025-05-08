@@ -33,6 +33,7 @@ app_license = "MIT"
 # include js in doctype views
 doctype_js = {
 	"Sales Order" : "public/js/sales_order_button.js",
+    "Quotation" : "public/js/quotation.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -102,34 +103,20 @@ before_uninstall = "ssv_reutlingen.setup.install.before_uninstall"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-#	"*": {
-#		"on_update": "method",
-#		"on_cancel": "method",
-#		"on_trash": "method"
-#	}
-# }
+doc_events = {
+	"Sales Order": {
+		"on_submit": "ssv_reutlingen.events.update_sponsoring.set_sales_order",
+	}
+}
 
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-#	"all": [
-#		"ssv_reutlingen.tasks.all"
-#	],
-#	"daily": [
-#		"ssv_reutlingen.tasks.daily"
-#	],
-#	"hourly": [
-#		"ssv_reutlingen.tasks.hourly"
-#	],
-#	"weekly": [
-#		"ssv_reutlingen.tasks.weekly"
-#	]
-#	"monthly": [
-#		"ssv_reutlingen.tasks.monthly"
-#	]
-# }
+scheduler_events = {
+	"daily": [
+		"ssv_reutlingen.ssv_reutlingen.doctype.sponsoring.sponsoring.sponsoring_contract_auto_management_background"
+	]
+}
 
 # Testing
 # -------
@@ -147,7 +134,9 @@ before_uninstall = "ssv_reutlingen.setup.install.before_uninstall"
 # generated from the base implementation of the doctype dashboard,
 # along with any modifications made in other Frappe apps
 override_doctype_dashboards = {
-	"Customer": "ssv_reutlingen.dashboard.customer_dashboard_extension.get_data"
+	"Customer": "ssv_reutlingen.dashboard.customer_dashboard_extension.get_data",
+	"Sales Order": "ssv_reutlingen.dashboard.sales_order_dashboard_extension.get_data",
+    "Quotation": "ssv_reutlingen.dashboard.quotation_dashboard_extension.get_data"
 }
 
 # exempt linked doctypes from being automatically cancelled

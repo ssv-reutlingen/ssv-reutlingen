@@ -1,6 +1,5 @@
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
-from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 
 def after_migrate():
 	create_custom_fields(get_custom_fields())
@@ -33,9 +32,18 @@ def get_custom_fields():
 			"label": "Processed",
             "default": "0",
             "print_hide": 1,
-			"allow_on_submit": 1,
+			"hidden": 1,
             "insert_after": "ssv_section"
         },
+		{
+			"fieldname": "sponsoring",
+            "fieldtype": "Link",
+			"options": "Sponsoring",
+			"label": "Sponsoring",
+            "print_hide": 1,
+			"hidden": 1,
+            "insert_after": "processed"
+		}
 	]
 
 	custom_fields_item = [
@@ -53,7 +61,24 @@ def get_custom_fields():
         },
 	]
 
+	custom_fields_quotation = [
+		{
+			"label": "SSV Reutlingen",
+			"fieldname": "ssv_reutlingen",
+			"fieldtype": "Section Break",
+			"hidden": 1
+		},
+		{
+			"fieldname": "sponsoring",
+            "fieldtype": "Link",
+			"options": "Sponsoring",
+			"label": "Sponsoring",
+            "insert_after": "ssv_reutlingen"
+		}
+	]
+
 	return {
 		"Sales Order": custom_fields_sales_order,
 		"Item": custom_fields_item,
+		"Quotation": custom_fields_quotation,
 	}

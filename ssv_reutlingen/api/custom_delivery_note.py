@@ -3,9 +3,9 @@ import json
 from frappe import _
 
 @frappe.whitelist()
-def create_delivery_notes(sales_order, dialog_data, items):
+def create_delivery_notes(doctype, name, dialog_data, items):
 
-    sales_order_doc = frappe.get_doc("Sales Order", sales_order)
+    doc = frappe.get_doc(doctype, name)
     items = json.loads(items)
     dialog_data = json.loads(dialog_data)
     
@@ -22,17 +22,17 @@ def create_delivery_notes(sales_order, dialog_data, items):
         )
 
         delivery_note_doc = frappe.new_doc("Delivery Note")
-        delivery_note_doc.customer = sales_order_doc.customer
+        delivery_note_doc.customer = doc.customer
         delivery_note_doc.posting_date = frappe.utils.nowdate()
         delivery_note_doc.set("items", [])
-        email = sales_order_doc.contact_email
+        email = doc.contact_email
         template = next((it for it in dialog_data if it["item_code"] == item.get('item_code')), None)
 
 
         item_data = {
             "item_code": item.get('item_code'),
             "qty": item.get('qty'),
-            "rate": item.get('rate'),
+            "rate": item.get('rate') if doctype == "Sales Order" else item.get('net_rate'),
             "warehouse": item.get('warehouse'),
             "uom": item.get('uom'),
         }
@@ -45,10 +45,11 @@ def create_delivery_notes(sales_order, dialog_data, items):
 
         send_csv_via_email(email, delivery_note_doc, template)
 
-    sales_order_doc.db_set("processed", 1)
-    sales_order_doc.db_set("status", "To Bill")
-    sales_order_doc.db_set("delivery_status", "Fully Delivered")
-    sales_order_doc.db_set("per_delivered", 100)
+    doc.db_set("processed", 1)
+    if doctype == "Sales Order":
+        doc.db_set("status", "To Bill")
+        doc.db_set("delivery_status", "Fully Delivered")
+        doc.db_set("per_delivered", 100)
 
     return {"message": "Delivery Notes created successfully!"}
 
