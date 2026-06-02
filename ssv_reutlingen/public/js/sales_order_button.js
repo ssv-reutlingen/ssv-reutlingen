@@ -113,7 +113,24 @@ frappe.ui.form.on('Sales Order', {
                             callback: function(response) {
                                 if (response.message) {
                                     frm.reload_doc();
-                                    frappe.msgprint(__("Delivery Notes created and emails sent successfully!"));
+
+                                    const delivery_notes = response.message.delivery_notes || [];
+                                    if (delivery_notes.length) {
+                                        const linkList = delivery_notes
+                                            .map((row) => {
+                                                const route = `/app/delivery-note/${row.delivery_note}`;
+                                                return `<a href="${route}" target="_blank" rel="noopener noreferrer">${row.delivery_note}</a>`;
+                                            })
+                                            .join("<br>");
+
+                                        frappe.msgprint({
+                                            title: __("Success"),
+                                            message: __("Delivery Notes created and emails sent.") + "<br><br>" + linkList,
+                                            indicator: "green",
+                                        });
+                                    } else {
+                                        frappe.msgprint(__("Delivery Notes created and emails sent successfully!"));
+                                    }
                                 }
                             }
                         });
