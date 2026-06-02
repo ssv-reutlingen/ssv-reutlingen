@@ -78,22 +78,38 @@ class Sponsoring(Document):
         self.contract_end, self.latest_notice_date = self.get_contract_end_and_notice_dates()
 
 
+def copy_sponsoring_line_to_sales_order_item(sponsoring_item, sales_order_item):
+    """Copy sponsoring line values by row position (supports duplicate item codes)."""
+    rate = flt(sponsoring_item.net_rate)
+    sales_order_item.item_code = sponsoring_item.item_code
+    sales_order_item.description = sponsoring_item.item_description
+    sales_order_item.uom = sponsoring_item.uom
+    sales_order_item.qty = sponsoring_item.qty
+    sales_order_item.rate = rate
+    sales_order_item.price_list_rate = rate
+    sales_order_item.discount_percentage = 0
+    sales_order_item.discount_amount = 0
+    sales_order_item.margin_type = ""
+    sales_order_item.margin_rate_or_amount = 0
+    if sponsoring_item.warehouse:
+        sales_order_item.warehouse = sponsoring_item.warehouse
+
+
 @frappe.whitelist()
 def create_sales_order(source_name, target_doc=None):
     def set_missing_values(source, target):
         target.customer = source.customer
         target.company = source.company
         target.sponsoring = source.name
-        
-        # Run ERPNext default calculations first
+        target.ignore_pricing_rule = 1
+
         target.run_method("set_missing_values")
         target.run_method("calculate_taxes_and_totals")
 
-        # Manually override rate after ERPNext's recalculations
-        for item in target.items:
-            sponsoring_item = next((si for si in source.sponsoring_items if si.item_code == item.item_code), None)
-            if sponsoring_item:
-                item.rate = sponsoring_item.net_rate
+        for sponsoring_item, so_item in zip(source.sponsoring_items, target.items):
+            copy_sponsoring_line_to_sales_order_item(sponsoring_item, so_item)
+
+        target.run_method("calculate_taxes_and_totals")
 
     doc = get_mapped_doc("Sponsoring", source_name, {
         "Sponsoring": {
@@ -115,9 +131,24 @@ def create_sales_order(source_name, target_doc=None):
         }
     }, target_doc, set_missing_values)
 
-    frappe.db.set_value("Sponsoring", source_name, "sales_order", doc.name)
-
     return doc
+
+
+def sales_order_before_save(doc, method=None):
+    """Preserve sponsoring contract rates when ERPNext refetches item prices on save."""
+    if not doc.sponsoring:
+        return
+
+    doc.ignore_pricing_rule = 1
+    sponsoring = frappe.get_doc("Sponsoring", doc.sponsoring)
+    for sponsoring_item, so_item in zip(sponsoring.sponsoring_items, doc.items):
+        copy_sponsoring_line_to_sales_order_item(sponsoring_item, so_item)
+    doc.calculate_taxes_and_totals()
+
+    if frappe.db.get_value("Sponsoring", doc.sponsoring, "sales_order") != doc.name:
+        frappe.db.set_value(
+            "Sponsoring", doc.sponsoring, "sales_order", doc.name, update_modified=False
+        )
 
 
 @frappe.whitelist()

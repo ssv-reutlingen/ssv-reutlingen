@@ -105,7 +105,7 @@ before_uninstall = "ssv_reutlingen.setup.install.before_uninstall"
 
 doc_events = {
 	"Sales Order": {
-		"on_submit": "ssv_reutlingen.events.update_sponsoring.set_sales_order",
+		"before_save": "ssv_reutlingen.ssv_reutlingen.doctype.sponsoring.sponsoring.sales_order_before_save",
 	}
 }
 
