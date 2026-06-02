@@ -2,8 +2,8 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Sponsoring', {
-    refresh: function(frm) {
-        const has_valid_items = frm.doc.sponsoring_items ? frm.doc.sponsoring_items.some(item => item.item_code) : false;
+	refresh: function(frm) {
+		const has_valid_items = frm.doc.sponsoring_items ? frm.doc.sponsoring_items.some(item => item.item_code) : false;
         const button = document.querySelector('button.btn-secondary[data-doctype="Quotation"]');
         if (button) {
             button.remove()
@@ -25,7 +25,7 @@ frappe.ui.form.on('Sponsoring', {
                 );
             }
         }
-    },
+	},
     
     make_sales_order: function(frm) {
         frappe.model.open_mapped_doc({
@@ -34,7 +34,7 @@ frappe.ui.form.on('Sponsoring', {
         });
     },
 
-    onload: function(frm) {
+	onload: function(frm) {
         if(frm.is_new()){
             frappe.call({
                 method: 'get_contract_start',
@@ -46,7 +46,7 @@ frappe.ui.form.on('Sponsoring', {
                 }
             });
         }
-    },
+	},
 
     contract_start: function(frm) {
         frappe.call({
@@ -59,7 +59,7 @@ frappe.ui.form.on('Sponsoring', {
                 }
             }
         });
-    },
+	},
 
     customer: function(frm) {
         frappe.call({
@@ -77,10 +77,10 @@ frappe.ui.form.on('Sponsoring', {
         });
         
     },
-    
-    net_total: function(frm) {
-        // Set grand total
-        frappe.call({
+	
+	net_total: function(frm) {
+		// Set grand total
+		frappe.call({
             method: 'ssv_reutlingen.ssv_reutlingen.doctype.sponsoring.sponsoring.calculate_grand_total',
             args: {
                 net_total: frm.doc.net_total
@@ -91,59 +91,103 @@ frappe.ui.form.on('Sponsoring', {
                 }
             }
         });
-    }
+	}
 });
 
 frappe.ui.form.on('Sponsoring Items', {
-    item_code: function(frm, cdt, cdn){
+    item_code: function(frm, cdt, cdn) {
         let row = locals[cdt][cdn];
-                
-        frappe.call({
-            method: 'ssv_reutlingen.ssv_reutlingen.doctype.sponsoring.sponsoring.get_item_details',
-            args: {
-                item_code: row.item_code,
-                company: frm.doc.company
-            },
-            callback: function(res) {
-                if (res.message) {
-                    row.warehouse = res.message
-                }
-            }
+        if (!row.item_code) {
+            return;
+        }
+
+        row.uom = null;
+
+        frappe.db.get_value("Customer", frm.doc.customer, "default_price_list").then((customer) => {
+            const price_list = customer?.default_price_list
+                || frappe.defaults.get_default("selling_price_list");
+
+            frm.call({
+                method: "erpnext.stock.get_item_details.get_item_details",
+                args: {
+                    doc: frm.doc,
+                    args: {
+                        item_code: row.item_code,
+                        warehouse: row.warehouse,
+                        customer: frm.doc.customer,
+                        company: frm.doc.company,
+                        doctype: "Sales Order",
+                        name: frm.doc.name,
+                        qty: row.qty || 1,
+                        uom: row.uom,
+                        price_list: price_list,
+                        currency: frappe.defaults.get_default("Currency"),
+                        conversion_rate: 1,
+                        plc_conversion_rate: 1,
+                        transaction_date: frm.doc.contract_start || frappe.datetime.get_today(),
+                        child_doctype: cdt,
+                        child_docname: cdn,
+                    },
+                },
+                callback: function(res) {
+                    if (res.exc || !res.message) {
+                        return;
+                    }
+
+                    const rate = flt(res.message.rate) || flt(res.message.price_list_rate);
+                    frappe.model.set_value(cdt, cdn, "net_rate", rate);
+                    frappe.model.set_value(cdt, cdn, "qty", 1);
+
+                    if (res.message.uom) {
+                        frappe.model.set_value(cdt, cdn, "uom", res.message.uom);
+                    }
+                    if (res.message.warehouse) {
+                        frappe.model.set_value(cdt, cdn, "warehouse", res.message.warehouse);
+                    }
+
+                    row = locals[cdt][cdn];
+                    row.net_amount = calculate_amount(row.net_rate, row.qty || 1);
+                    refresh_field("net_amount", cdn, "sponsoring_items");
+                    calculate_net_total(frm);
+                },
+            });
         });
-        
     },
 
-    net_rate: function(frm,cdt,cdn) {
-        let row = locals[cdt][cdn];
-        row.net_amount = calculate_amount(row.net_rate, row.qty)
-        refresh_field("net_amount", cdn, "sponsoring_items");
-        calculate_net_total(frm)
-    },
+	net_rate: function(frm,cdt,cdn) {
+		let row = locals[cdt][cdn];
+		row.net_amount = calculate_amount(row.net_rate, row.qty)
+		refresh_field("net_amount", cdn, "sponsoring_items");
+		calculate_net_total(frm)
+	},
 
-    qty: function(frm,cdt,cdn) {
-        let row = locals[cdt][cdn];
-        row.net_amount = calculate_amount(row.net_rate, row.qty)
-        refresh_field("net_amount", cdn, "sponsoring_items");
-        calculate_net_total(frm)
-    },
+	qty: function(frm,cdt,cdn) {
+		let row = locals[cdt][cdn];
+		row.net_amount = calculate_amount(row.net_rate, row.qty)
+		refresh_field("net_amount", cdn, "sponsoring_items");
+		calculate_net_total(frm)
+	},
 
-    sponsoring_items_remove: function(frm,cdt,cdn){
-        calculate_net_total(frm)
-    }
+	sponsoring_items_remove: function(frm,cdt,cdn){
+		calculate_net_total(frm)
+	}
 });
 
 function calculate_amount (net_rate, qty) {
-    return frappe.utils.flt(net_rate * qty, frappe.defaults.get_default("currency_precision") || 2)
+	return flt(
+		flt(net_rate) * flt(qty),
+		frappe.defaults.get_default("currency_precision") || 2
+	)
 }
 
 function calculate_net_total (frm) {
-    frappe.call({
-        method: 'calculate_net_total',
-        doc: frm.doc,
-        callback: function(res) {
-            if (res.message) {
-                frm.set_value('net_total', res.message);
-            }
-        }
-    });
+	frappe.call({
+		method: 'calculate_net_total',
+		doc: frm.doc,
+		callback: function(res) {
+			if (res.message) {
+				frm.set_value('net_total', res.message);
+			}
+		}
+	});
 }
