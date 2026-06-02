@@ -1,16 +1,25 @@
 import frappe
 import json
 from frappe import _
+from frappe.core.doctype.communication.email import _make as make_communication
+
+
+def _parse_json_param(value):
+    if isinstance(value, str):
+        return json.loads(value)
+    return value
+
 
 @frappe.whitelist()
 def create_delivery_notes(doctype, name, dialog_data, items):
 
     doc = frappe.get_doc(doctype, name)
-    items = json.loads(items)
-    dialog_data = json.loads(dialog_data)
+    items = _parse_json_param(items)
+    dialog_data = _parse_json_param(dialog_data)
     
     total_steps = len(items)
     current_step = 0
+    created_delivery_notes = []
 
     for idx, item in enumerate(items):
         current_step += 1
@@ -26,7 +35,7 @@ def create_delivery_notes(doctype, name, dialog_data, items):
         delivery_note_doc.posting_date = frappe.utils.nowdate()
         delivery_note_doc.set("items", [])
         email = doc.contact_email
-        template = next((it for it in dialog_data if it["item_code"] == item.get('item_code')), None)
+        template = _get_template_for_item(dialog_data, item.get("item_code"))
 
 
         item_data = {
@@ -43,7 +52,13 @@ def create_delivery_notes(doctype, name, dialog_data, items):
         delivery_note_doc.submit()
         frappe.db.commit()
 
-        send_csv_via_email(email, delivery_note_doc, template)
+        communication = send_csv_via_email(email, delivery_note_doc, template)
+        frappe.db.commit()
+
+        created_delivery_notes.append({
+            "delivery_note": delivery_note_doc.name,
+            "communication": communication,
+        })
 
     doc.db_set("processed", 1)
     if doctype == "Sales Order":
@@ -51,33 +66,57 @@ def create_delivery_notes(doctype, name, dialog_data, items):
         doc.db_set("delivery_status", "Fully Delivered")
         doc.db_set("per_delivered", 100)
 
-    return {"message": "Delivery Notes created successfully!"}
+    return {
+        "message": "Delivery Notes created successfully!",
+        "delivery_notes": created_delivery_notes,
+    }
 
 
-def send_csv_via_email(recipient_email, doc, template):
-    try:
-        doc = frappe.as_json(doc.as_dict(), indent=2)
+def _get_template_for_item(dialog_data, item_code):
+    item_code = (item_code or "").strip()
+    for row in dialog_data:
+        if (row.get("item_code") or "").strip() == item_code:
+            return row
+    return None
 
-        subject = template['subject']
-        message = template['response']
 
-        attachments = [{
-            "fname": "delivery_note",
-            "fcontent": doc,
-        }]
-        
-        frappe.sendmail(
-			recipients=recipient_email,
-			subject=subject,
-			message=message,
-            attachments=attachments,
-            delayed=False,
-            retry=3
-		)
+def send_csv_via_email(recipient_email, delivery_note_doc, template):
+    if not recipient_email:
+        frappe.throw(
+            _("No contact email found on {0} {1}. Cannot send delivery note email.").format(
+                delivery_note_doc.doctype, delivery_note_doc.name
+            )
+        )
 
-        return {"status": "success", "message": _("Email sent successfully.")}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
+    if not template:
+        frappe.throw(
+            _("No email template found for delivery note {0}.").format(delivery_note_doc.name)
+        )
+
+    subject = template.get("subject") or ""
+    message = template.get("response") or ""
+    doc_json = frappe.as_json(delivery_note_doc.as_dict(), indent=2)
+
+    attachments = [{
+        "fname": f"{delivery_note_doc.name}.json",
+        "fcontent": doc_json,
+    }]
+
+    # Same path as the desk "New Email" button (frappe.core.doctype.communication.email.make).
+    result = make_communication(
+        doctype=delivery_note_doc.doctype,
+        name=delivery_note_doc.name,
+        content=message,
+        subject=subject,
+        recipients=recipient_email,
+        communication_medium="Email",
+        send_email=True,
+        attachments=attachments,
+        communication_type="Communication",
+        add_signature=False,
+        now=True,
+    )
+    return result.get("name")
 
 
 @frappe.whitelist()
